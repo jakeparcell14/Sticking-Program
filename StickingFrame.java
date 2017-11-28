@@ -22,10 +22,20 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.JMenu;
+import java.awt.CardLayout;
+import javax.swing.JEditorPane;
+import java.awt.FlowLayout;
 
 public class StickingFrame extends JFrame {
 
@@ -70,53 +80,54 @@ public class StickingFrame extends JFrame {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 577, 381);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
-		
+
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
-		
+
 		JMenuItem mntmSaveText = new JMenuItem("Save Text");
+
 		mnFile.add(mntmSaveText);
-		
+
 		JMenuBar menuBar_1 = new JMenuBar();
 		mnFile.add(menuBar_1);
-		
+
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
-		
+
 		JMenuItem mntmAboutStickingHelper = new JMenuItem("About Sticking Helper");
 		mnHelp.add(mntmAboutStickingHelper);
-		
+
 		JMenuItem mntmCheatSheet = new JMenuItem("Cheat Sheet");
 		mnHelp.add(mntmCheatSheet);
-		
+
 		JMenuBar menuBar_2 = new JMenuBar();
 		mnHelp.add(menuBar_2);
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.setBorder(null);
 		setContentPane(contentPane);
+		contentPane.setLayout(new CardLayout(0, 0));
+
+		JPanel stickingPanel = new JPanel();
+		contentPane.add(stickingPanel, "stickingPanel");
 
 		JPanel titlePanel = new JPanel();
-		contentPane.add(titlePanel, BorderLayout.NORTH);
+		stickingPanel.add(titlePanel);
 
 		//creates title
 		JLabel titleLabel = new JLabel("Sticking Helper");
 		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 22));
 		titlePanel.add(titleLabel);
 
-		JPanel buttonPanel = new JPanel();
-		contentPane.add(buttonPanel, BorderLayout.SOUTH);
-
 		//allows textArea to be scrollable
 		JScrollPane scrollPane = new JScrollPane();
+		stickingPanel.add(scrollPane);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		contentPane.add(scrollPane, BorderLayout.CENTER);
 
-		JPanel textPanel = new JPanel();
-		scrollPane.setViewportView(textPanel);
+		JPanel stickingTextPanel = new JPanel();
+		scrollPane.setViewportView(stickingTextPanel);
 
 		JTextArea textArea = new JTextArea();
 		textArea.setEditable(false);
@@ -127,10 +138,10 @@ public class StickingFrame extends JFrame {
 				//figures out which key was pressed
 				char c = arg0.getKeyChar();
 				String key = Character.toString(c);
-				
+
 				//sets corresponding key index to true to show that it is being held
 				int keyIndex = keyboard.indexOf(key);
-				
+
 				if(held[keyIndex] == false)
 				{
 					//retrieves text that is already in the textArea
@@ -194,7 +205,7 @@ public class StickingFrame extends JFrame {
 						}		
 					}
 				}
-				
+
 				//indicates that the key is being held down until the key is released
 				held[keyIndex] = true;
 			}
@@ -204,10 +215,10 @@ public class StickingFrame extends JFrame {
 				//figures out which key was pressed
 				char c = arg0.getKeyChar();
 				String key = Character.toString(c);
-				
+
 				//sets corresponding key index to true to show that it is being held
 				int keyIndex = keyboard.indexOf(key);
-				
+
 				//indicates that the key was released
 				held[keyIndex] = false;
 			}
@@ -217,8 +228,11 @@ public class StickingFrame extends JFrame {
 		textArea.setLineWrap(true);
 		textArea.setFont(new Font("Arial", Font.PLAIN, 12));
 		textArea.setColumns(45);
-		textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 225, 4));
-		textPanel.add(textArea);
+		textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 185, 4));
+		stickingTextPanel.add(textArea, "name_1226797391765");
+
+		JPanel buttonPanel = new JPanel();
+		stickingPanel.add(buttonPanel);
 
 		JButton copyAllButton = new JButton("Copy All");
 		copyAllButton.addActionListener(new ActionListener() {
@@ -242,7 +256,117 @@ public class StickingFrame extends JFrame {
 				textArea.requestFocusInWindow();
 			}
 		});
-		buttonPanel.add(clearAllButton);		
-	}
+		buttonPanel.add(clearAllButton);	
 
+		JPanel aboutPanel = new JPanel();
+		contentPane.add(aboutPanel, "aboutPanel");
+		aboutPanel.setLayout(null);
+
+		JPanel aboutPageTitlePanel = new JPanel();
+		aboutPageTitlePanel.setBounds(0, 0, 559, 37);
+		aboutPanel.add(aboutPageTitlePanel);
+
+		JLabel label = new JLabel("Sticking Helper");
+		label.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		aboutPageTitlePanel.add(label);
+
+		JScrollPane aboutScrollPane = new JScrollPane();
+		aboutScrollPane.setBounds(36, 37, 486, 236);
+		aboutScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		aboutPanel.add(aboutScrollPane);
+
+		JPanel aboutTextPanel = new JPanel();
+		aboutScrollPane.add(aboutTextPanel);
+		
+				JTextArea aboutTextArea = new JTextArea();
+				aboutScrollPane.setViewportView(aboutTextArea);
+				aboutTextArea.setWrapStyleWord(true);
+				aboutTextArea.setFont(new Font("Arial", Font.PLAIN, 12));
+				aboutTextArea.setColumns(45);
+				aboutTextArea.setEditable(false);
+
+		JPanel aboutPageButtonPanel = new JPanel();
+		aboutPageButtonPanel.setBounds(0, 273, 559, 35);
+		aboutPanel.add(aboutPageButtonPanel);
+
+		JButton goBackButton = new JButton("Go Back");
+		goBackButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//show about page when this button is clicked
+				CardLayout cl = (CardLayout)(contentPane.getLayout());
+				cl.show(contentPane, "stickingPanel");
+
+				//sets focus back to textArea after button is pressed
+				textArea.requestFocusInWindow(); 
+			}
+		});
+		aboutPageButtonPanel.add(goBackButton);
+
+		mntmSaveText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{
+					File f = new File("sticking.txt");
+
+					if(f.exists())
+					{
+						f.delete();
+					}
+
+					PrintWriter out = new PrintWriter(f);
+
+					String text = textArea.getText();
+
+					out.println(text);
+
+					out.close();
+
+				}
+				catch(FileNotFoundException e)
+				{
+
+				}
+			}
+		});
+
+
+		mntmAboutStickingHelper.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//show about page when this button is clicked
+				CardLayout cl = (CardLayout)(contentPane.getLayout());
+				cl.show(contentPane, "aboutPanel");
+
+				String readMeText = null;
+
+				//read text from README file and add text to editorPane
+				try
+				{
+					// FileReader reads text files in the default encoding.
+					FileReader fileReader = 
+							new FileReader("README.txt");
+
+					BufferedReader bufferedReader = 
+							new BufferedReader(fileReader);
+
+					while((readMeText = bufferedReader.readLine()) != null) {
+						aboutTextArea.setText(readMeText);
+					}
+
+					bufferedReader.close();
+					fileReader.close();
+				}
+				catch(FileNotFoundException e)
+				{
+
+				}
+				catch (IOException e1) {
+					e1.printStackTrace();
+				}
+
+				//add text from readme file to text pane
+				aboutTextArea.setText(readMeText);
+			}
+		});
+
+	}
 }
